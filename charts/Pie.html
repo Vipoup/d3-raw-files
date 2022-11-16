@@ -1,0 +1,123 @@
+<!-- Code from d3-graph-gallery.com -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<!-- Color scale -->
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+<!-- Add buttons -->
+<!-- <button onclick="update(all)">All</button> -->
+<button onclick="update(asians)">Asian/Pacific Islander</button>
+<button onclick="update(blacks)">Black</button>
+<button onclick="update(hispanics)">Hispanic/Latino</button>
+<button onclick="update(natives)">Native American</button>
+<button onclick="update(whites)">White</button>
+<button onclick="update(unknowns)">Unknown</button>
+<button onclick="update(others)">Other</button>
+
+
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
+
+
+<script>
+
+// set the dimensions and margins of the graph
+var width = 450
+    height = 450
+    margin = 40
+
+// The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+var radius = Math.min(width, height) / 2 - margin
+
+// append the svg object to the div called 'my_dataviz'
+var svg = d3.select("#my_dataviz")
+  .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+// create data_sets
+var all = {asian:52, black:573, hispanic:378, native:37, other:1, unknown:40, white:1158}
+
+var asians = {disputed:0, firearm:16, knife:17, no:7, nonleathal:1, other:5, unknown:2, vehicle:4}
+var blacks = {disputed:12, firearm:283, knife:58, no:121, nonleathal:22, other:25, unknown:26, vehicle:26}
+var hispanics = {disputed:1, firearm:161, knife:65, no:67, nonleathal:12, other:34, unknown:28, vehicle:10}
+var natives = {disputed:0, firearm:17, knife:5, no:6, nonleathal:0, other:4, unknown:3, vehicle:2}
+var others = {disputed:0, firearm:1, knife:0, no:0, nonleathal:0, other:0, unknown:0, vehicle:0}
+var unknowns = {disputed:0, firearm:18, knife:10, no:3, nonleathal:1, other:5, unknown:3, vehicle:0}
+var whites = {disputed:3, firearm:564, knife:156, no:201, nonleathal:57, other:75, unknown:65, vehicle:37}
+
+// set the color scale
+var color = d3.scaleOrdinal()
+  .domain(["asian", "black", "hispanic", "native", "white", "disputed", "firearm", "knife", "no", "nonleath", "other", "unknown", "vehicle"])
+  .range(d3.schemeDark2);
+
+// A function that create / update the plot for a given variable:
+function update(data) {
+
+  // Compute the position of each group on the pie:
+  var pie = d3.pie()
+    .value(function(d) {return d.value; })
+    .sort(function(a, b) { console.log(a) ; return d3.ascending(a.key, b.key);} ) // This make sure that group order remains the same in the pie chart
+  var data_ready = pie(d3.entries(data))
+
+  // shape helper to build arcs:
+  var arcGenerator = d3.arc()
+    .innerRadius(0)
+    .outerRadius(radius)
+
+  // map to data
+  var u = svg.selectAll("path")
+    .data(data_ready)
+  //   .enter()
+  //   .append('text')
+  //   .text(function(d){ return d.data.key})
+  //   .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
+  //   .style("text-anchor", "middle")
+  //   .style("font-size", 17)
+
+  // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+  u
+    .enter()
+    .append('path')
+    .merge(u)
+    .transition()
+    .duration(1000)
+    .attr('d', d3.arc()
+      .innerRadius(0)
+      .outerRadius(radius)
+    )
+    .attr('fill', function(d){ return(color(d.data.key)) })
+    .attr("stroke", "white")
+    .style("stroke-width", "2px")
+    .style("opacity", 1)
+    
+
+  // // Now add the annotation. Use the centroid method to get the best coordinates
+  // u
+  //   .selectAll('path')
+  //   .data(data_ready)
+  //   .enter()
+  //   .append('text')
+  //   .text(function(d){ return d.data.key})
+  //   .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
+  //   .style("text-anchor", "middle")
+  //   .style("font-size", 17)
+
+  // remove the group that is not present anymore
+  u
+    .exit()
+    .remove()
+  
+}
+
+
+// Initialize the plot with the first dataset
+update(all)
+
+</script>
