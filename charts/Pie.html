@@ -9,6 +9,7 @@
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 
 <!-- Add buttons -->
+<button onclick="window.location.reload();">All</button>
 <!-- <button onclick="update(all)">All</button> -->
 <button onclick="update(asians)">Asian/Pacific Islander</button>
 <button onclick="update(blacks)">Black</button>
@@ -59,6 +60,7 @@ var color = d3.scaleOrdinal()
 
 // A function that create / update the plot for a given variable:
 function update(data) {
+  d3.selectAll('text').remove()
 
   // Compute the position of each group on the pie:
   var pie = d3.pie()
@@ -74,12 +76,6 @@ function update(data) {
   // map to data
   var u = svg.selectAll("path")
     .data(data_ready)
-  //   .enter()
-  //   .append('text')
-  //   .text(function(d){ return d.data.key})
-  //   .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
-  //   .style("text-anchor", "middle")
-  //   .style("font-size", 17)
 
   // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
   u
@@ -96,18 +92,16 @@ function update(data) {
     .attr("stroke", "white")
     .style("stroke-width", "2px")
     .style("opacity", 1)
-    
 
-  // // Now add the annotation. Use the centroid method to get the best coordinates
-  // u
-  //   .selectAll('path')
-  //   .data(data_ready)
-  //   .enter()
-  //   .append('text')
-  //   .text(function(d){ return d.data.key})
-  //   .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
-  //   .style("text-anchor", "middle")
-  //   .style("font-size", 17)
+  svg
+    .selectAll('mySlices')
+    .data(data_ready)
+    .enter()
+    .append('text')
+    .text(function(d){ return d.data.key})
+    .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
+    .style("text-anchor", "middle")
+    .style("font-size", 17)
 
   // remove the group that is not present anymore
   u
