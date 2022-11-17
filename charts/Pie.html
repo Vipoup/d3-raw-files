@@ -60,6 +60,7 @@ var color = d3.scaleOrdinal()
 
 // A function that create / update the plot for a given variable:
 function update(data) {
+  // remove previous text
   d3.selectAll('text').remove()
 
   // Compute the position of each group on the pie:
@@ -93,6 +94,7 @@ function update(data) {
     .style("stroke-width", "2px")
     .style("opacity", 1)
 
+  // label slices
   svg
     .selectAll('mySlices')
     .data(data_ready)
@@ -109,7 +111,6 @@ function update(data) {
     .remove()
   
 }
-
 
 // Initialize the plot with the first dataset
 update(all)
